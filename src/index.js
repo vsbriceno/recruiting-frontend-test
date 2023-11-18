@@ -1,12 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import App from './App';
+import InvoiceSelection from "./InvoiceAssignment"
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
   <React.StrictMode>
-    <App />
+    <InvoiceSelection />
   </React.StrictMode>,
   document.getElementById('root')
 );
