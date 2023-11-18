@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import Modal from 'react-modal';
 import InvoiceTable from './InvoiceTable';
-import './InvoiceAssignment.css'
+import InvoiceSummary from './InvoiceSummary';
+import './InvoiceAssignment.css';
 
 const InvoiceSelection = () => {
   const [invoices, setInvoices] = useState([]);
@@ -11,8 +12,6 @@ const InvoiceSelection = () => {
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [selectedCreditNotes, setSelectedCreditNotes] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [assignmentSummary, setAssignmentSummary] = useState(null);
-
 
   const fetchInvoices = async () => {
     try {
@@ -33,32 +32,16 @@ const InvoiceSelection = () => {
     fetchInvoices();
   }, []);
 
-  const HandleSummary = () => {
-    const selectedCreditNotesInfo = creditNotes.filter((creditNote) =>
-      selectedCreditNotes.includes(creditNote.id)
-    );
-    const selectedInvoiceInfo = invoices.find((invoice) => 
-      invoice.id === selectedInvoice
-    );
-    
-    setAssignmentSummary({
-      creditNotes: selectedCreditNotesInfo,
-      invoiceId: selectedInvoiceInfo.id,
-      invoiceAmount: selectedInvoiceInfo.amount,
-
-    });
-  }
-
   const handleInvoiceClick = (invoiceId, type) => {
     if (type === 'recieved') {
-      setSelectedInvoice(invoiceId);
-      const creditNotes = invoices.filter( (invoice) =>
-        invoice.type === 'credit_note' &&
-        invoice.reference === invoiceId
+      const creditNotes = invoices.filter(
+        (invoice) =>
+          invoice.type === 'credit_note' && invoice.reference === invoiceId
       );
+      setSelectedInvoice(invoiceId);
       setCreditNotes(creditNotes);
-    }
-    else {
+      setSelectedCreditNotes([]);
+    } else {
       setSelectedCreditNotes((prevSelected) => {
         if (prevSelected.includes(invoiceId)) {
           return prevSelected.filter((id) => id !== invoiceId);
@@ -66,11 +49,10 @@ const InvoiceSelection = () => {
           return [...prevSelected, invoiceId];
         }
       });
-    } 
+    }
   };
 
   const handleAssignButtonClick = () => {
-    HandleSummary();  
     setIsModalOpen(true);
   };
 
@@ -78,7 +60,37 @@ const InvoiceSelection = () => {
     setSelectedInvoice(null);
     setSelectedCreditNotes([]);
     setIsModalOpen(false);
-    setAssignmentSummary(null); 
+  };
+
+  const getSelectedInvoiceInfo = () => {
+    if (selectedInvoice) {
+      const selectedInvoiceInfo = invoices.find(
+        (invoice) => invoice.id === selectedInvoice
+      );
+      return selectedInvoiceInfo;
+    }
+    return null;
+  };
+
+  const getSelectedCreditNotesInfo = () => {
+    if (selectedCreditNotes.length > 0) {
+      const selectedCreditNotesInfo = creditNotes.filter((note) =>
+        selectedCreditNotes.includes(note.id)
+      );
+      return selectedCreditNotesInfo;
+    }
+    return [];
+  };
+
+  const renderSummary = () => {
+    const selectedInvoiceInfo = getSelectedInvoiceInfo();
+    const selectedCreditNotesInfo = getSelectedCreditNotesInfo();
+    return (
+      < InvoiceSummary
+        selectedInvoiceInfo={selectedInvoiceInfo}
+        selectedCreditNotesInfo={selectedCreditNotesInfo}
+      />
+    );
   };
 
   return (
@@ -87,7 +99,7 @@ const InvoiceSelection = () => {
       <InvoiceTable 
         invoices={recievedInvoices}
         handleInvoiceClick={handleInvoiceClick}
-        type = 'recieved' 
+        type='recieved' 
       />
       {selectedInvoice && (
         <>
@@ -95,12 +107,13 @@ const InvoiceSelection = () => {
           <InvoiceTable 
             invoices={creditNotes}
             handleInvoiceClick={handleInvoiceClick}
-            type = 'credit_note' 
+            type='credit_note' 
           />
         </>  
       )}
       {selectedCreditNotes.length > 0 && (
         <div>
+          {renderSummary()}
           <button onClick={handleAssignButtonClick}>Asignar</button>
         </div>
       )}
@@ -112,21 +125,7 @@ const InvoiceSelection = () => {
       >
         <div>
           <p>Asignación exitosa</p>
-          {assignmentSummary && (
-            <div>
-              <h1>Resumen de asignación</h1>
-              <p>ID Factura Asignada: {assignmentSummary.invoiceId}</p>
-              <p>Monto Factura Asignada: {assignmentSummary.invoiceAmount}</p>
-              <p>Notas de Crédito Asignadas:</p>
-              <ul>
-                {assignmentSummary.creditNotes.map((creditNote) => (
-                  <li key={creditNote.id}>
-                    ID Nota de Crédito: {creditNote.id}, Monto: {creditNote.amount} {creditNote.currency} 
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
+          {renderSummary()}
           <button onClick={closeModal}>Cerrar</button>
         </div>
       </Modal>

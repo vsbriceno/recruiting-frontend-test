@@ -2,7 +2,7 @@ import React from 'react';
 
 const InvoiceTable= (props) => {
     const {invoices, type, handleInvoiceClick } = props;
-  
+    
     return (
         <table>
         <thead>

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import InvoiceSelection from "./InvoiceAssignment"
+import InvoiceSelection from "./Invoices/InvoiceAssignment"
 import reportWebVitals from './reportWebVitals';
 
 ReactDOM.render(
