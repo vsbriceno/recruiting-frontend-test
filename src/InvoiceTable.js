@@ -9,6 +9,7 @@ const InvoiceTable= (props) => {
           <tr>
             <th>Invoice ID</th>
             <th>Amount</th>
+            <th>Currency</th>
             <th>Type</th>
           </tr>
         </thead>
@@ -20,6 +21,7 @@ const InvoiceTable= (props) => {
               >
                 <td>{invoice.id}</td>
                 <td>{invoice.amount}</td>
+                <td>{invoice.currency}</td>
                 <td>{invoice.type}</td>
               </tr>
             ))}

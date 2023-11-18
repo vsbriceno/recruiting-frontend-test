@@ -121,7 +121,7 @@ const InvoiceSelection = () => {
               <ul>
                 {assignmentSummary.creditNotes.map((creditNote) => (
                   <li key={creditNote.id}>
-                    ID Nota de Crédito: {creditNote.id}, Monto: {creditNote.amount}
+                    ID Nota de Crédito: {creditNote.id}, Monto: {creditNote.amount} {creditNote.currency} 
                   </li>
                 ))}
               </ul>
