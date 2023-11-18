@@ -40,15 +40,12 @@ const InvoiceSelection = () => {
     const selectedInvoiceInfo = invoices.find((invoice) => 
       invoice.id === selectedInvoice
     );
-    const newAmountToPay = selectedCreditNotesInfo.reduce((total, creditNote) =>
-      total - creditNote.amount,
-      selectedInvoiceInfo.amount
-    );
+    
     setAssignmentSummary({
       creditNotes: selectedCreditNotesInfo,
       invoiceId: selectedInvoiceInfo.id,
       invoiceAmount: selectedInvoiceInfo.amount,
-      newAmountToPay: newAmountToPay,
+
     });
   }
 
@@ -128,7 +125,6 @@ const InvoiceSelection = () => {
                   </li>
                 ))}
               </ul>
-              <p>Nuevo Monto a Pagar: {assignmentSummary.newAmountToPay}</p>
             </div>
           )}
           <button onClick={closeModal}>Cerrar</button>
